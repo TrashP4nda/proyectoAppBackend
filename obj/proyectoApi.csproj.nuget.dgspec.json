@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/VICOMTECH/dmarting/Desktop/proyectoApi/proyectoApi.csproj": {}
+    "C:\\Users\\Dani\\Desktop\\Backend\\proyectoAppBackend\\proyectoApi.csproj": {}
   },
   "projects": {
-    "/home/VICOMTECH/dmarting/Desktop/proyectoApi/proyectoApi.csproj": {
+    "C:\\Users\\Dani\\Desktop\\Backend\\proyectoAppBackend\\proyectoApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/VICOMTECH/dmarting/Desktop/proyectoApi/proyectoApi.csproj",
+        "projectUniqueName": "C:\\Users\\Dani\\Desktop\\Backend\\proyectoAppBackend\\proyectoApi.csproj",
         "projectName": "proyectoApi",
-        "projectPath": "/home/VICOMTECH/dmarting/Desktop/proyectoApi/proyectoApi.csproj",
-        "packagesPath": "/home/VICOMTECH/dmarting/.nuget/packages/",
-        "outputPath": "/home/VICOMTECH/dmarting/Desktop/proyectoApi/obj/",
+        "projectPath": "C:\\Users\\Dani\\Desktop\\Backend\\proyectoAppBackend\\proyectoApi.csproj",
+        "packagesPath": "C:\\Users\\Dani\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Dani\\Desktop\\Backend\\proyectoAppBackend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/VICOMTECH/dmarting/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\Dani\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -80,7 +80,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.101/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

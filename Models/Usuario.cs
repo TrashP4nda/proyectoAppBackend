@@ -20,5 +20,6 @@ public class Usuario
     [EmailAddress]   
     public string Email { get; set; }
     
-    // Additional properties like Email, DateOfJoining, etc., can be added here
+    public virtual ICollection<UsuarioCamaraFavorite> FavoriteCameras { get; set; }
+    public virtual ICollection<UsuarioIncidenciaFavorite> FavoriteIncidencias { get; set; }
 }

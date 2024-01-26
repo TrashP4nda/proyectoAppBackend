@@ -33,6 +33,9 @@ using System.ComponentModel.DataAnnotations;
         [Required]
         [MaxLength(100)]
         public string IncidenceLevel { get; set; }
+        
+        public virtual ICollection<UsuarioIncidenciaFavorite> FavoriteByUsuarios { get; set; }
+
     }
 
 
