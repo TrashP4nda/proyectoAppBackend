@@ -33,6 +33,10 @@ public class Camara
     [MaxLength(100)]
     public string Longitude { get; set; }
     
+    [Required]
+    [MaxLength(100)]
+    public string url { get; set; }
+    
     public virtual ICollection<UsuarioCamaraFavorite> FavoriteByUsuarios { get; set; }
 
 }

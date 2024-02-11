@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using proyectoApi.Models.DTOs;
 
 namespace proyectoApi.Controllers;
 using Microsoft.AspNetCore.Mvc;
@@ -47,8 +48,22 @@ public class IncidenciasController : ControllerBase
     // POST: api/incidencias
     [Authorize]
     [HttpPost]
-    public async Task<ActionResult<Incidencia>> PostIncidencia([FromForm] Incidencia incidencia)
+    public async Task<ActionResult<Incidencia>> PostIncidencia([FromForm] IncidenciaDTO incidenciaDTO)
     {
+
+        var incidencia = new Incidencia
+        {
+         AutonomousRegion   = incidenciaDTO.AutonomousRegion,
+         CarRegistration = incidenciaDTO.CarRegistration,
+         Cause = incidenciaDTO.Cause,
+         CityTown = incidenciaDTO.CityTown,
+         Direction = incidenciaDTO.Direction,
+         endDate = incidenciaDTO.Direction,
+         incidenceDescription = incidenciaDTO.incidenceDescription,
+         incidenceID = incidenciaDTO.incidenceID,
+         IncidenceLevel = incidenciaDTO.IncidenceLevel
+        };
+        
         _context.Incidencias.Add(incidencia);
         await _context.SaveChangesAsync();
 
@@ -58,7 +73,7 @@ public class IncidenciasController : ControllerBase
     // PUT: api/incidencias/5
     [Authorize]
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutIncidencia(int id, Incidencia incidencia)
+    public async Task<IActionResult> PutIncidencia(int id, [FromForm] IncidenciaDTO incidencia)
     {
         if (id != incidencia.Id)
         {
@@ -88,10 +103,13 @@ public class IncidenciasController : ControllerBase
 
     // DELETE: api/incidencias/5
     [Authorize]
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteIncidencia(int id)
+    [HttpDelete("{incidenceId}")]
+    public async Task<IActionResult> DeleteIncidencia(string incidenceId)
     {
-        var incidencia = await _context.Incidencias.FindAsync(id);
+        // Find the incidencia entry using IncidenceID
+        var incidencia = await _context.Incidencias
+            .FirstOrDefaultAsync(i => i.incidenceID == incidenceId);
+
         if (incidencia == null)
         {
             return NotFound();

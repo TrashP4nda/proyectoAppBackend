@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using System.Security.Cryptography;
+using proyectoApi.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
-
+builder.Services.AddSingleton<IEmailService, SmtpEmailService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseMySql(builder.Configuration.GetConnectionString("databasecon"), 
@@ -36,15 +38,26 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddControllers();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAnyOrigin",
+        builder => builder
+            .AllowAnyOrigin() // Allows any origin
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
+
 // Build the application
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline here, after calling Build()
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
-
+app.UseCors("AllowAnyOrigin");
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

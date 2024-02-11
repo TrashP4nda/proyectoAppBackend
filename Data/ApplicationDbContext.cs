@@ -17,11 +17,15 @@ namespace proyectoApi.Data
         public DbSet<Camara> Camaras { get; set; } // Add this
         public DbSet<UsuarioCamaraFavorite> UsuarioCamaraFavorites { get; set; } // Add this
         public DbSet<UsuarioIncidenciaFavorite> UsuarioIncidenciaFavorites { get; set; } // Add this
+        
+        public DbSet<customIncidencia> CustomIncidencias { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
+            modelBuilder.Entity<customIncidencia>().ToTable("CustomIncidencias");
+            
             // Configure UsuarioCamaraFavorite
             modelBuilder.Entity<UsuarioCamaraFavorite>()
                 .HasKey(ucf => new { ucf.UsuarioId, ucf.CamaraId });

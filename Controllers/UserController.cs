@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using proyectoApi.Services;
 
 namespace proyectoApi.Controllers;
 
@@ -22,10 +23,11 @@ using System.Text;
     public class UserController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
-
-        public UserController(ApplicationDbContext context)
+        private readonly IEmailService _emailService;
+        public UserController(ApplicationDbContext context , IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         // Create a new user
@@ -38,7 +40,9 @@ using System.Text;
                 PasswordHash = usuarioDTO.PasswordHash, // Note: Password should be hashed
                 Email = usuarioDTO.Email
             };
-
+            
+            
+            await _emailService.SendEmailAsync( usuario.Email,"Welcome to Our Service", "<h1>Thank you for registering!</h1>");
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
 
@@ -65,14 +69,26 @@ using System.Text;
             return await _context.Usuarios.ToListAsync();
         }
 
-        // Update a user
         [Authorize]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromForm] UsuarioDTO usuario)
+        public async Task<IActionResult> Update(int id, [FromForm] UsuarioDTO usuarioDTO)
         {
-            if (id != usuario.Id) return BadRequest();
+            if (id != usuarioDTO.Id) 
+                return BadRequest("ID mismatch");
 
-            _context.Entry(usuario).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            var usuario = await _context.Usuarios.FindAsync(id);
+            if (usuario == null) 
+            {
+                return NotFound();
+            }
+
+            // Map the DTO to the entity
+            usuario.Username = usuarioDTO.Username;
+            // Assuming you're hashing the password somewhere else before setting it
+            usuario.PasswordHash = usuarioDTO.PasswordHash;
+            usuario.Email = usuarioDTO.Email;
+            // Map other properties as needed
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -91,6 +107,7 @@ using System.Text;
 
             return NoContent();
         }
+
 
         // Delete a user
         [Authorize]
@@ -156,7 +173,8 @@ using System.Text;
                     CameraName = cameraData.CameraName,
                     Kilometer = cameraData.Kilometer,
                     Latitude = cameraData.Latitude,
-                    Longitude = cameraData.Longitude
+                    Longitude = cameraData.Longitude,
+                    url = cameraData.url
                 };
                 _context.Camaras.Add(camera);
                 // Do not await SaveChangesAsync() here; we'll save later after adding favorites
@@ -188,18 +206,18 @@ using System.Text;
         [HttpPost("addIncidenciaFavorite/{userId}")]
         public async Task<IActionResult> AddIncidenciaAndFavorite(int userId, [FromForm] IncidenciaDTO incidenciaData)
         {
-            // First, check if the user exists
+         
             var user = await _context.Usuarios.FindAsync(userId);
             if (user == null)
             {
                 return NotFound("User not found.");
             }
 
-            // Check if the incidencia already exists
+          
             var incidencia = await _context.Incidencias
-                .FirstOrDefaultAsync(i => i.CarRegistration == incidenciaData.CarRegistration);
+                .FirstOrDefaultAsync(i => i.incidenceID == incidenciaData.incidenceID);
 
-            // If the incidencia doesn't exist, add it
+          
             if (incidencia == null)
             {
                 incidencia = new Incidencia
@@ -215,32 +233,32 @@ using System.Text;
                     IncidenceLevel = incidenciaData.IncidenceLevel
                 };
                 _context.Incidencias.Add(incidencia);
-                // Do not await SaveChangesAsync() here; we'll save later after adding favorites
+              
             }
 
-            // Check if the incidencia is already a favorite
+        
             bool isAlreadyFavorite = await _context.UsuarioIncidenciaFavorites
                 .AnyAsync(f => f.UsuarioId == userId && f.IncidenciaId == incidencia.Id);
 
             if (!isAlreadyFavorite)
             {
-                // Link the incidencia to the user as a favorite
+              
                 var favorite = new UsuarioIncidenciaFavorite
                 {
                     UsuarioId = userId,
-                    Incidencia = incidencia // Directly assign the incidencia entity
+                    Incidencia = incidencia 
                 };
                 _context.UsuarioIncidenciaFavorites.Add(favorite);
             }
 
-            // Now save changes for both the new incidencia and the new favorite
+         
             await _context.SaveChangesAsync();
 
             return Ok();
         }
 
         
-        
+        [Authorize]
         [HttpGet("{userId}/favorites")]
         public async Task<IActionResult> GetFavorites(int userId)
         {
@@ -270,10 +288,10 @@ using System.Text;
         [HttpDelete("removeFavoriteCamera/{userId}/{cameraId}")]
         public async Task<IActionResult> RemoveFavoriteCamera(int userId, String cameraId)
         {
-            // Find the favorite camera entry
+            
             var favoriteCamera = await _context.UsuarioCamaraFavorites
                 .Where(f => f.UsuarioId == userId)
-                .Include(f => f.Camara) // Include the Camara to access its cameraId
+                .Include(f => f.Camara) 
                 .FirstOrDefaultAsync(f => f.Camara.CameraId == cameraId);
 
             if (favoriteCamera == null)
@@ -292,10 +310,10 @@ using System.Text;
         [HttpDelete("removeFavoriteIncidencia/{userId}/{incidenciaId}")]
         public async Task<IActionResult> RemoveFavoriteIncidencia(int userId, String incidenciaId)
         {
-            // Find the favorite incidencia entry
+         
             var favoriteIncidencia = await _context.UsuarioIncidenciaFavorites
                 .Where(f => f.UsuarioId == userId)
-                .Include(f => f.Incidencia) // Include the Incidencia to access its unique identifier
+                .Include(f => f.Incidencia)
                 .FirstOrDefaultAsync(f => f.Incidencia.incidenceID == incidenciaId);
 
             if (favoriteIncidencia == null)
@@ -320,12 +338,12 @@ using System.Text;
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Username),
-                // Add other claims as needed
+           
             };
 
             var token = new JwtSecurityToken(
-                issuer: "prueba.com",    // Uncomment and specify if needed
-                audience: "best-api",  // Uncomment and specify if needed
+                issuer: "prueba.com",    
+                audience: "best-api",  
                 claims: claims,
                 expires: DateTime.Now.AddDays(1),
                 signingCredentials: credentials);

@@ -2,6 +2,7 @@
 
 public class IncidenciaDTO
 {
+    public int Id { get; set; }
     public string AutonomousRegion { get; set; }
     
     public string CarRegistration { get; set; }
