@@ -60,7 +60,7 @@ public class IncidenciasController : ControllerBase
          Direction = incidenciaDTO.Direction,
          endDate = incidenciaDTO.Direction,
          incidenceDescription = incidenciaDTO.incidenceDescription,
-         incidenceID = incidenciaDTO.incidenceID,
+         incidenceId = incidenciaDTO.incidenceId,
          IncidenceLevel = incidenciaDTO.IncidenceLevel
         };
         
@@ -108,7 +108,7 @@ public class IncidenciasController : ControllerBase
     {
         // Find the incidencia entry using IncidenceID
         var incidencia = await _context.Incidencias
-            .FirstOrDefaultAsync(i => i.incidenceID == incidenceId);
+            .FirstOrDefaultAsync(i => i.incidenceId == incidenceId);
 
         if (incidencia == null)
         {

@@ -35,7 +35,7 @@ public class Camara
     
     [Required]
     [MaxLength(100)]
-    public string url { get; set; }
+    public string urlImage { get; set; }
     
     public virtual ICollection<UsuarioCamaraFavorite> FavoriteByUsuarios { get; set; }
 

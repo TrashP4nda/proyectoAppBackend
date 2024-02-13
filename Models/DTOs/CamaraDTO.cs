@@ -9,5 +9,5 @@ public class CamaraDTO
     public string Latitude { get; set; }
     public string Longitude { get; set; }
     
-    public string url { get; set; }
+    public string urlImage { get; set; }
 }

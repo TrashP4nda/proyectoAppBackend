@@ -174,7 +174,7 @@ using System.Text;
                     Kilometer = cameraData.Kilometer,
                     Latitude = cameraData.Latitude,
                     Longitude = cameraData.Longitude,
-                    url = cameraData.url
+                    urlImage = cameraData.urlImage
                 };
                 _context.Camaras.Add(camera);
                 // Do not await SaveChangesAsync() here; we'll save later after adding favorites
@@ -215,7 +215,7 @@ using System.Text;
 
           
             var incidencia = await _context.Incidencias
-                .FirstOrDefaultAsync(i => i.incidenceID == incidenciaData.incidenceID);
+                .FirstOrDefaultAsync(i => i.incidenceId == incidenciaData.incidenceId);
 
           
             if (incidencia == null)
@@ -229,7 +229,7 @@ using System.Text;
                     Direction = incidenciaData.Direction,
                     endDate = incidenciaData.endDate,
                     incidenceDescription = incidenciaData.incidenceDescription,
-                    incidenceID = incidenciaData.incidenceID,
+                    incidenceId = incidenciaData.incidenceId,
                     IncidenceLevel = incidenciaData.IncidenceLevel
                 };
                 _context.Incidencias.Add(incidencia);
@@ -314,7 +314,7 @@ using System.Text;
             var favoriteIncidencia = await _context.UsuarioIncidenciaFavorites
                 .Where(f => f.UsuarioId == userId)
                 .Include(f => f.Incidencia)
-                .FirstOrDefaultAsync(f => f.Incidencia.incidenceID == incidenciaId);
+                .FirstOrDefaultAsync(f => f.Incidencia.incidenceId == incidenciaId);
 
             if (favoriteIncidencia == null)
             {

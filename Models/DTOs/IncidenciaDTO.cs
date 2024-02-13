@@ -17,7 +17,7 @@ public class IncidenciaDTO
  
     public string incidenceDescription { get; set; }
   
-    public string incidenceID { get; set; }
+    public string incidenceId { get; set; }
   
     public string IncidenceLevel { get; set; }
 }

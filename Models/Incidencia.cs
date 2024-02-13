@@ -29,7 +29,7 @@ using System.ComponentModel.DataAnnotations;
         public string incidenceDescription { get; set; }
         [Required]
         [MaxLength(100)]
-        public string incidenceID { get; set; }
+        public string incidenceId { get; set; }
         [Required]
         [MaxLength(100)]
         public string IncidenceLevel { get; set; }
