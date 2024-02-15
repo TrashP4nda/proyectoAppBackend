@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using proyectoApi.Services;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace proyectoApi.Controllers;
 
@@ -37,10 +39,11 @@ using System.Text;
             var usuario = new Usuario
             {
                 Username = usuarioDTO.Username,
-                PasswordHash = usuarioDTO.PasswordHash, // Note: Password should be hashed
+                
                 Email = usuarioDTO.Email
             };
-            
+            var passwordHasher = new PasswordHasher<Usuario>();
+            usuario.PasswordHash = passwordHasher.HashPassword(usuario, usuarioDTO.PasswordHash);
             
             await _emailService.SendEmailAsync( usuario.Email,"Welcome to Our Service", "<h1>Thank you for registering!</h1>");
             _context.Usuarios.Add(usuario);
@@ -82,12 +85,11 @@ using System.Text;
                 return NotFound();
             }
 
-            // Map the DTO to the entity
+
             usuario.Username = usuarioDTO.Username;
-            // Assuming you're hashing the password somewhere else before setting it
-            usuario.PasswordHash = usuarioDTO.PasswordHash;
+            //usuario.PasswordHash = usuarioDTO.PasswordHash;
             usuario.Email = usuarioDTO.Email;
-            // Map other properties as needed
+           
 
             try
             {
@@ -126,13 +128,26 @@ using System.Text;
         [HttpPost("login")]
         public IActionResult Login([FromForm] LoginModel login)
         {
-            var user = _context.Usuarios.FirstOrDefault(u => u.Username == login.Username && u.PasswordHash == login.Password);
+            var user = _context.Usuarios.FirstOrDefault(u => u.Username == login.Username);
             if (user == null)
             {
                 return Unauthorized();
             }
-
+            var passwordHasher = new PasswordHasher<Usuario>();
+            
+            
+            var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, login.Password);
+            
+            if (result == PasswordVerificationResult.Failed)
+            {
+                return Unauthorized("Invalid password.");
+            }
+            
+            
             var token = GenerateJwtToken(user);
+            
+            
+            
 
             // Create an object that includes both the token and user information
             var response = new
